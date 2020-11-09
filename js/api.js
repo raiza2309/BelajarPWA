@@ -1,7 +1,6 @@
-var base_url_football_data = "https://api.football-data.org/v2/";
+var base_url_football_data = "https://api.football-data.org/v2";
 
 let API_KEY = "68273d26b7e040b3bcfeab9f7b7006d5";
-let endpoint_teams
 
 // Blok kode akan dipanggil jika fetch berhasil
 function status(response) {
@@ -89,33 +88,76 @@ function cariLiga() {
     // Ambil nilai query parameter (?id=)
     var urlParams = new URLSearchParams(window.location.search);
     var idParam = urlParams.get("id");
-    // fetch(base_url + "competitions/2021/matches?dateFrom=2020-11-01&dateTo=2020-11-08", {
-    //     method: "GET",
-    //     headers: {
-    //         "X-Auth-Token": "68273d26b7e040b3bcfeab9f7b7006d5"
-    //     }
-    // })
-    fetch(base_url_football_data + "article/" + idParam)
+    if('caches' in window){
+        caches.match(`${base_url_football_data}/competitions/${idParam}/teams`).then(function (response) {
+            if(response){
+                response.json().then(function (data) {
+                    // Objek/array JavaScript dari response.json() masuk lewat data.
+                    var kontenTim = "";
+                    data.teams.forEach(function (tim) {
+                        if (tim.crestUrl === null){
+                            tim.crestUrl = "assets/img/Default Logo.png";
+                        }
+                        kontenTim += `
+                            <div class="col s6 m4">
+                                <div class="card medium">
+                                    <a href="./clubs.html?id=${tim.id}">
+                                        <div class="card-image waves-effect waves-block waves-light">
+                                            <img src="${tim.crestUrl}" alt="Logo ${tim.name}" class="tim-logo">
+                                        </div>
+                                    </a>
+                                    <div class="card-content">
+                                        <span class="card-title truncate"><b>${tim.shortName}</b></span>
+                                        <p>${tim.name}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    });
+
+                    // Sisipkan komponen card ke dalam elemen dengan id #tim
+                    document.getElementById("daftar-tim").innerHTML = kontenTim;
+                })
+            }
+        })
+    }
+
+    fetch(`${base_url_football_data}/competitions/${idParam}/teams`, {
+        method: "GET",
+        headers: {
+            "X-Auth-Token": API_KEY
+        }
+    })
     .then(status)
     .then(json)
     .then(function (data) {
         // Objek/array JavaScript dari response.json() masuk lewat data.
-        console.log(data);
+
         // Menyusun komponen card artikel secara dinamis
-        var articleHTML = `
-            <div class="card">
-                <div class="card-image waves-effect waves-block waves-light">
-                    <img src="${data.result.cover}">
+        var kontenTim = "";
+        data.teams.forEach(function (tim) {
+            if (tim.crestUrl === null){
+                tim.crestUrl = "assets/img/Default Logo.png";
+            }
+            kontenTim += `
+                <div class="col s6 m4">
+                    <div class="card medium">
+                        <a href="./clubs.html?id=${tim.id}">
+                            <div class="card-image waves-effect waves-block waves-light">
+                                <img src="${tim.crestUrl}" alt="Logo ${tim.name}" class="tim-logo">
+                            </div>
+                        </a>
+                        <div class="card-content">
+                            <span class="card-title truncate"><b>${tim.shortName}</b></span>
+                            <p>${tim.name}</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="card-content">
-                    <span class="card-title">${data.result.post_title}</span>
-                    ${snarkdown(data.result.post_content)}
-                </div>
-            </div>
-        `;
+            `;
+        });
 
-        // Sisipkan komponen card ke dalam elemen dengan id #body-content
-        document.getElementById("body-content").innerHTML = articleHTML;
-    });
+        // Sisipkan komponen card ke dalam elemen dengan id #tim
+        document.getElementById("daftar-tim").innerHTML = kontenTim;
+    })
+    .catch(error);
 }
-

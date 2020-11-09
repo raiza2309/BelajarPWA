@@ -1,19 +1,20 @@
-const CACHE_NAME = "firstpwa-v8";
+const CACHE_NAME = "football-v10";
 var urlsToCache = [
     "/",
-    "/nav.html",
     "/index.html",
-    "/article.html",
-    "/pages/home.html",
-    "/pages/about.html",
-    "/pages/contact.html",
-    "/css/materialize.min.css",
+    "/clubs.html",
     "/css/style.css",
+    "/css/materialize.min.css",
     "/js/materialize.min.js",
     "/js/nav.js",
-    "js/api.js",
+    "/js/api.js",
+    "/js/sw.js",
     "/manifest.json",
-    "/assets/img/Logo.png",
+    "/assets/img/Football Logo 192px.png",
+    "/assets/img/Football Logo 256px.png",
+    "/assets/img/Football Logo 384px.png",
+    "/assets/img/Football Logo 512px.png",
+    "/assets/img/Default Logo.png",
     "/assets/img/Premier League.png",
     "/assets/img/Serie A.jpg",
     "/assets/img/Primera Division.png",
@@ -33,9 +34,9 @@ self.addEventListener("install", function (event) {
 
 
 self.addEventListener("fetch", function (event) {
-    var base_url = "https://api.football-data.org/v2/";
+    const base_url = "https://api.football-data.org/v2/";
 
-    if(event.request.url.indexOf("clubs.html?id=2019") > -1){
+    if(event.request.url.indexOf(base_url) > -1){
         event.respondWith(
             caches.open(CACHE_NAME).then(function (cache) {
                 return fetch(event.request).then(function (response) {
@@ -61,7 +62,7 @@ self.addEventListener("activate", function (event) {
         .then(function (cacheNames) {
             return Promise.all(
                 cacheNames.map(function (cacheName) {
-                    if(cacheName !== CACHE_NAME && cacheName.startsWith('firstpwa')) {
+                    if(cacheName !== CACHE_NAME && cacheName.startsWith('football')) {
                         console.log("ServiceWorker: cache " + cacheName + " dihapus");
                         return caches.delete(cacheName);
                     }
