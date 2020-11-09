@@ -28,7 +28,7 @@ function error(error) {
 }
 
 // Blok kode untuk melakukan request data json
-function cariLiga() {
+function cariKompetisi() {
     if('caches' in window){
         caches.match("assets/data/competitions.json").then(function (response) {
             if(response){
@@ -58,12 +58,6 @@ function cariLiga() {
         })
     }
     
-    // fetch(base_url + "competitions/2021/matches?dateFrom=2020-11-01&dateTo=2020-11-08", {
-    //     method: "GET",
-    //     headers: {
-    //         "X-Auth-Token": "68273d26b7e040b3bcfeab9f7b7006d5"
-    //     }
-    // })
     fetch("./assets/data/competitions.json")
     .then(status)
     .then(json)
@@ -91,12 +85,17 @@ function cariLiga() {
     .catch(error);
 }
 
-function getArticlesById() {
+function cariLiga() {
     // Ambil nilai query parameter (?id=)
     var urlParams = new URLSearchParams(window.location.search);
     var idParam = urlParams.get("id");
-
-    fetch(base_url + "article/" + idParam)
+    // fetch(base_url + "competitions/2021/matches?dateFrom=2020-11-01&dateTo=2020-11-08", {
+    //     method: "GET",
+    //     headers: {
+    //         "X-Auth-Token": "68273d26b7e040b3bcfeab9f7b7006d5"
+    //     }
+    // })
+    fetch(base_url_football_data + "article/" + idParam)
     .then(status)
     .then(json)
     .then(function (data) {
