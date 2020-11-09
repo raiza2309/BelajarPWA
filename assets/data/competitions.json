@@ -1,0 +1,34 @@
+{
+    "kompetisi": [
+        {
+            "id": 2021,
+            "liga": "PREMIER LEAGUE",
+            "namaLiga": "Liga Inggris",
+            "logo": "./assets/img/Premier League.png"
+        },
+        {
+            "id": 2019,
+            "liga": "SERIE A",
+            "namaLiga": "Liga Italia",
+            "logo": "./assets/img/Serie A.jpg"
+        },
+        {
+            "id": 2014,
+            "liga": "PRIMERA DIVISION",
+            "namaLiga": "Liga Spanyol",
+            "logo": "./assets/img/Primera Division.png"
+        },
+        {
+            "id": 2015,
+            "liga": "LIGUE 1",
+            "namaLiga": "Liga Perancis",
+            "logo": "./assets/img/Ligue 1.png"
+        },
+        {
+            "id": 2001,
+            "liga": "UEFA CHAMPIONS LEAGUE",
+            "namaLiga": "UEFA Champions League",
+            "logo": "./assets/img/UCL.png"
+        }
+    ]
+}
