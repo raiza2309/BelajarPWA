@@ -37,11 +37,11 @@ function requestPermission() {
                             userVisibleOnly: true,
                             applicationServerKey: urlBase64ToUint8Array("BCy4OswQXlu8vNiVkQ9X9BVcn8XPc-F63nq61Jz90JlbhTpYitAXqTOC3IqmVHo7eoSnua4BZ0qs_WGL1MzT8Ow")
                         })
-                        // .then(function(subscribe) {
-                        //     console.log('Berhasil melakukan subscribe dengan endpoint: ', subscribe.endpoint);
-                        //     console.log('Berhasil melakukan subscribe dengan p256dh key: ', btoa(String.fromCharCode.apply(null, new Uint8Array(subscribe.getKey('p256dh')))));
-                        //     console.log('Berhasil melakukan subscribe dengan auth key: ', btoa(String.fromCharCode.apply(null, new Uint8Array(subscribe.getKey('auth')))));
-                        // })
+                        .then(function(subscribe) {
+                            console.log('Berhasil melakukan subscribe dengan endpoint: ', subscribe.endpoint);
+                            console.log('Berhasil melakukan subscribe dengan p256dh key: ', btoa(String.fromCharCode.apply(null, new Uint8Array(subscribe.getKey('p256dh')))));
+                            console.log('Berhasil melakukan subscribe dengan auth key: ', btoa(String.fromCharCode.apply(null, new Uint8Array(subscribe.getKey('auth')))));
+                        })
                         .catch(function(e) {
                             console.error('Tidak dapat melakukan subscribe ', e.message);
                         });
