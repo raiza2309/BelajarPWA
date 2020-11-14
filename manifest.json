@@ -1,7 +1,7 @@
 {
-    "name": "My First PWA",
-    "short_name": "My PWA",
-    "description": "Aplikasi PWA pertama saya",
+    "name": "Informasi Sepak Bola",
+    "short_name": "Football",
+    "description": "Aplikasi tentang sepak bola dengan PWA",
     "start_url": "/index.html",
     "display": "standalone",
     "background_color": "#311B92",
