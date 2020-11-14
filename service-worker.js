@@ -3,12 +3,16 @@ var urlsToCache = [
     "/",
     "/index.html",
     "/clubs.html",
+    "/detail-club.html",
+    "/myfavorite.html",
     "/css/style.css",
     "/css/materialize.min.css",
     "/js/materialize.min.js",
     "/js/nav.js",
     "/js/api.js",
     "/js/sw.js",
+    "/js/idb.js",
+    "/js/db.js",
     "/manifest.json",
     "/assets/img/Football Logo 192px.png",
     "/assets/img/Football Logo 256px.png",
@@ -21,6 +25,7 @@ var urlsToCache = [
     "/assets/img/Ligue 1.png",
     "/assets/img/UCL.png",
     "/assets/data/competitions.json",
+    "https://fonts.googleapis.com/icon?family=Material+Icons"
 ];
 
 self.addEventListener("install", function (event) {

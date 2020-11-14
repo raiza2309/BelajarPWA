@@ -10,6 +10,8 @@
     <link rel="stylesheet" href="css/materialize.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="manifest" href="/manifest.json">
+    <link rel="preconnect" href="https://crests.football-data.org">
+    <link rel="preconnect" href="https://api.football-data.org">
     <meta name="theme-color" content="#311B92">
 </head>
 <body>
@@ -31,21 +33,31 @@
     </nav>
     <!-- Akhir Navigasi -->
 
-    <div class="container" id="body-content">
-        <h1 class="center">Daftar Klub</h1>
-        <div class="row">
-            <div class="col s12 m8 l10 offset-m2 offset-l1" id="liga"></div>
+    <div class="container">
+        <h1 class="center">Daftar Klub Favorit Anda</h1>
+        <div class="row" id="daftar-tim">
+            
         </div>
     </div>
 
-    <script src="/js/materialize.min.js"></script>
-    <script src="/js/api.js"></script>
-    <script src="/js/nav.js"></script>
-    <script src="/js/sw.js"></script>
+    <script src="js/materialize.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/sw.js"></script>
+    <script src="js/idb.js"></script>
+    <script src="js/db.js"></script>
     <script>
         // Request API untuk pertama kali
         document.addEventListener("DOMContentLoaded", function () {
-            cariKompetisi();
+            cariTimFavorit();
+        });
+
+        // Image handler
+        const images = document.querySelectorAll('img')
+        images.forEach((img) => {
+            img.addEventListener('error', () => {
+                img.src = 'assets/img/Default Logo.png';
+            });
         });
     </script>
 </body>

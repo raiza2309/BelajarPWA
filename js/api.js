@@ -115,7 +115,7 @@ function cariLiga() {
                         `;
                     });
 
-                    // Sisipkan komponen card ke dalam elemen dengan id #tim
+                    // Sisipkan komponen card ke dalam elemen dengan id #daftar-tim
                     document.getElementById("daftar-tim").innerHTML = kontenTim;
                 })
             }
@@ -142,7 +142,7 @@ function cariLiga() {
             kontenTim += `
                 <div class="col s6 m4">
                     <div class="card medium">
-                        <a href="./clubs.html?id=${tim.id}">
+                        <a href="./detail-club.html?id=${tim.id}">
                             <div class="card-image waves-effect waves-block waves-light">
                                 <img src="${tim.crestUrl}" alt="Logo ${tim.name}" class="tim-logo">
                             </div>
@@ -160,4 +160,247 @@ function cariLiga() {
         document.getElementById("daftar-tim").innerHTML = kontenTim;
     })
     .catch(error);
+}
+
+function detailClub() {
+    return new Promise(function(resolve, reject){
+        // Ambil nilai query parameter (?id=)
+        var urlParams = new URLSearchParams(window.location.search);
+        var idParam = urlParams.get("id");
+
+        if('caches' in window){
+            caches.match(`${base_url_football_data}/teams/${idParam}`).then(function (response) {
+                if(response){
+                    response.json().then(function (data) {
+                        // Objek/array JavaScript dari response.json() masuk lewat data.
+                        if (data.crestUrl === null){
+                            data.crestUrl = "assets/img/Default Logo.png";
+                        }
+                        var detailTim = `
+                            <div class="card-image boundary">
+                                <img class="detail-logo" src="${data.crestUrl}" alt="Logo Club">
+                                <a class="btn-floating btn-large halfway-fab waves-effect waves-light deep-purple darken-4">
+                                    <i class="large material-icons" id="favorite-btn">favorite_border</i>
+                                    <i class="large material-icons" id="favorited" style="display: none;">favorite</i>
+                                </a>
+                            </div>
+                            <div class="card-content deep-purple lighten-5">
+                        `;
+
+                        // Menampilkan data bukan PLAYER misal: COACH, ASSISTANT_COACH
+                        for (let index = 0; index < data.squad.length; index++) {
+                            if(data.squad[index].role != "PLAYER") {
+                                detailTim += `
+                                    <div class="row">
+                                        <h2>${data.squad[index].role}</h2>
+                                        <div class="col s12">
+                                            <span class="card-title coach">${data.squad[index].name}</span>
+                                        </div>
+                                    </div>
+                                `;
+                            }
+                        }
+
+                        // Menampilkan data PLAYER
+                        for (let index = 0; index < data.squad.length; index++) {
+                            if(data.squad[index].role == "PLAYER") {
+                                if(index == 0){
+                                    detailTim += `<div class="row"><h2>${data.squad[index].position}</h2>`
+                                } else {
+                                    if (data.squad[index].position != data.squad[index-1].position) {
+                                        detailTim += `</div><div class="row"><h2>${data.squad[index].position}</h2>`
+                                    }
+                                }
+                                detailTim += `
+                                    <div class="col s12 m4">
+                                        <span class="card-title player">${data.squad[index].name}</span>
+                                    </div>
+                                `;
+                            }
+                        }
+
+                        detailTim += `</div></div>`;
+
+                        // Sisipkan komponen card ke dalam elemen dengan id #content
+                        document.getElementById("content").innerHTML = detailTim;
+
+                        var fav = document.getElementById("favorite-btn"); // Tombol untuk favorite
+                        var favorited = document.getElementById("favorited"); // Tombol untuk unfavorite
+                        
+                        getById(parseInt(idParam))
+                            .then(function (response){
+                                // Cek apakah halaman ini difavoritkan atau tidak
+                                if(response){
+                                    // Jika iya, maka tombol unfavorite akan muncul daripada tombol favorite
+                                    fav.style.display = "none";
+                                    favorited.style.display = "block";
+                                }
+                            }
+                        )
+
+                        // Fungsi ketika tombol favorit diclick
+                        fav.onclick = () => {
+                            // Mengambil data id, crestUrl, dan name saja dari data untuk disimpan
+                            const {id: id, crestUrl: crestUrl, name: name} = data;
+                            // Membuat objek baru untuk disimpan
+                            let favoriteClub = new Object();
+                            favoriteClub.id = id;
+                            favoriteClub.crestUrl = crestUrl;
+                            favoriteClub.name = name;
+                            // Insert data ke IndexedDB
+                            addToFavorite(favoriteClub);
+                            // Ubah tombol favorite menjadi unfavorite
+                            fav.style.display = "none";
+                            favorited.style.display = "block";
+                        }
+            
+                        // Fungsi ketika tombol unfavorite diclick
+                        favorited.onclick = () => {
+                            // Hapus item di DB berdasarkan id club
+                            deleteById(parseInt(idParam))
+                            // Ubah tombol unfavorite menjadi favorite
+                            fav.style.display = "block";
+                            favorited.style.display = "none";
+                        }
+
+                        return resolve(data);
+                    })
+                }
+            })
+        }
+        
+        fetch(`${base_url_football_data}/teams/${idParam}`, {
+            method: "GET",
+            headers: {
+                "X-Auth-Token": API_KEY
+            }
+        })
+        .then(status)
+        .then(json)
+        .then(function (data) {
+            // Objek/array JavaScript dari response.json() masuk lewat data.
+
+            // Menyusun komponen card artikel secara dinamis
+            if (data.crestUrl === null){
+                data.crestUrl = "assets/img/Default Logo.png";
+            }
+            var detailTim = `
+                <div class="card-image boundary">
+                    <img class="detail-logo" src="${data.crestUrl}" alt="Logo Club">
+                    <a class="btn-floating btn-large halfway-fab waves-effect waves-light deep-purple darken-4">
+                        <i class="large material-icons" id="favorite-btn">favorite_border</i>
+                        <i class="large material-icons" id="favorited" style="display: none;">favorite</i>
+                    </a>
+                </div>
+                <div class="card-content deep-purple lighten-5">
+            `;
+
+            // Menampilkan data bukan PLAYER misal: COACH, ASSISTANT_COACH
+            for (let index = 0; index < data.squad.length; index++) {
+                if(data.squad[index].role != "PLAYER") {
+                    detailTim += `
+                        <div class="row">
+                            <h2>${data.squad[index].role}</h2>
+                            <div class="col s12">
+                                <span class="card-title coach">${data.squad[index].name}</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            // Menampilkan data PLAYER
+            for (let index = 0; index < data.squad.length; index++) {
+                if(data.squad[index].role == "PLAYER") {
+                    if(index == 0){
+                        detailTim += `<div class="row"><h2>${data.squad[index].position}</h2>`
+                    } else {
+                        if (data.squad[index].position != data.squad[index-1].position) {
+                            detailTim += `</div><div class="row"><h2>${data.squad[index].position}</h2>`
+                        }
+                    }
+                    detailTim += `
+                        <div class="col s12 m4">
+                            <span class="card-title player">${data.squad[index].name}</span>
+                        </div>
+                    `;
+                }
+            }
+
+            detailTim += `</div></div>`;
+
+            // Sisipkan komponen card ke dalam elemen dengan id #tim
+            document.getElementById("content").innerHTML = detailTim;
+            
+            var fav = document.getElementById("favorite-btn");
+            var favorited = document.getElementById("favorited");
+
+            getById(parseInt(idParam))
+                .then(function (response){
+                    // Cek apakah halaman ini difavoritkan atau tidak
+                    if(response){
+                        // Jika iya, maka tombol unfavorite akan muncul daripada tombol favorite
+                        fav.style.display = "none";
+                        favorited.style.display = "block";
+                    }
+                }
+            )
+
+            // Fungsi ketika tombol favorit diclick
+            fav.onclick = () => {
+                // Mengambil data id, crestUrl, dan name saja dari data untuk disimpan
+                const {id: id, crestUrl: crestUrl, name: name} = data;
+                // Membuat objek baru untuk disimpan
+                let favoriteClub = new Object();
+                favoriteClub.id = id;
+                favoriteClub.crestUrl = crestUrl;
+                favoriteClub.name = name;
+                // Insert data ke IndexedDB
+                addToFavorite(favoriteClub);
+                // Ubah tombol favorite menjadi unfavorite
+                fav.style.display = "none";
+                favorited.style.display = "block";
+            }
+
+            // Fungsi ketika tombol unfavorite diclick
+            favorited.onclick = () => {
+                // Hapus item di DB berdasarkan id club
+                deleteById(parseInt(idParam))
+                // Ubah tombol unfavorite menjadi favorite
+                fav.style.display = "block";
+                favorited.style.display = "none";
+            }
+
+            return resolve(data);
+        })
+        .catch(error);
+    })
+}
+
+function cariTimFavorit(){
+    getAll().then(function (clubs) {
+        // Menyusun komponen card artikel secara dinamis
+        var kontenTim = "";
+        clubs.forEach(function (tim) {
+            if (tim.crestUrl === null){
+                tim.crestUrl = "assets/img/Default Logo.png";
+            }
+            kontenTim += `
+                <div class="col s6 m4">
+                    <div class="card medium">
+                        <a href="./detail-club.html?id=${tim.id}">
+                            <div class="card-image waves-effect waves-block waves-light">
+                                <img src="${tim.crestUrl}" alt="Logo ${tim.name}" class="tim-logo">
+                            </div>
+                        </a>
+                        <div class="card-content">
+                            <span class="card-title truncate"><b>${tim.name}</b></span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        // Sisipkan komponen card ke dalam elemen dengan id #daftar-tim
+        document.getElementById("daftar-tim").innerHTML = kontenTim;
+    });
 }
